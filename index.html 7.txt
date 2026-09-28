@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remember the Day</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            /* Rich pink luxury background with soft floral/bokeh-like ambient gradient styling */
+            background: radial-gradient(circle at center, #ffeef2 0%, #ffb6c1 50%, #e06d86 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Georgia', serif;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Ambient floating cherry blossom background decorative accents */
+        body::before {
+            content: "🌸";
+            position: absolute;
+            font-size: 5rem;
+            opacity: 0.15;
+            top: 10%;
+            left: 5%;
+        }
+        body::after {
+            content: "🌸";
+            position: absolute;
+            font-size: 4rem;
+            opacity: 0.15;
+            bottom: 10%;
+            right: 5%;
+        }
+
+        /* "Remember the Day" heading placed outside the box */
+        .outside-title {
+            font-size: 2.2rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-style: italic;
+            text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 4px 10px rgba(128, 24, 56, 0.4);
+        }
+
+        /* Card container configured to your exact required resolution bounds */
+        .card-container {
+            position: relative;
+            width: 300px; 
+            height: 200px; 
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(128, 24, 56, 0.3);
+            overflow: hidden;
+            border: 3px solid #fff3f5;
+        }
+
+        /* Inside content structure revealed after scratching */
+        .card-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+            background: linear-gradient(180deg, #fff5f7 0%, #ffe3e8 100%);
+        }
+
+        /* Premium 3D-Style Date Card Module inside the box boundaries */
+        .date-box-3d {
+            width: 250px;
+            height: 140px;
+            background: linear-gradient(135deg, #ffffff 0%, #fff0f3 100%);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            
+            /* Layered drop shadow configuration to construct the 3D popping depth */
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 
+                0 1px 0 #d4af37,
+                0 2px 0 #caa02e,
+                0 3px 0 #bd9224,
+                0 4px 0 #b0841b,
+                0 6px 15px rgba(128, 24, 56, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .ring-icon {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .weekday-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #a04060;
+            margin-bottom: 4px;
+        }
+
+        .date-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #801838;
+            letter-spacing: 0.5px;
+        }
+
+        /* Interactive scratch canvas layout configuration overlay layer */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            z-index: 10;
+            touch-action: none; /* Disables browser scrolling conflicts during mobile drag interface operations */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Heading text displayed OUTSIDE the box -->
+    <h1 class="outside-title">Remember the Day</h1>
+
+    <!-- Scratch Card Box Structure (300x200 resolution) -->
+    <div class="card-container" id="cardBox">
+        
+        <!-- The visual presentation module revealed inside the box boundaries -->
+        <div class="card-content">
+            <div class="date-box-3d">
+                <div class="ring-icon">💍</div>
+                <div class="weekday-text">Monday,</div>
+                <div class="date-text">12 October 2026</div>
+            </div>
+        </div>
+
+        <!-- Upper Foil Coating Layer: Solid Matte Champagne-Gold Finish Cover -->
+        <canvas id="scratchCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('cardBox');
+        let isDrawing = false;
+
+        function initScratchCard() {
+            // Locks the system canvas boundary resolution cleanly to container box dimensions
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+
+            // Fills surface area with the matte champagne gold coating base tint
+            ctx.fillStyle = '#f3ca40'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Generates a fine decorative inner white line border tracking the layout edge bounds
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(12, 12, canvas.width - 24, canvas.height - 24);
+
+            // Renders the clean action prompt label tracking center alignment specifications
+            ctx.font = "bold 13px sans-serif";
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("SCRATCH TO REVEAL", canvas.width / 2, canvas.height - 28);
+            
+            // Directs canvas operation configuration logic settings to cleanly erase targeted coordinates
+            ctx.globalCompositeOperation = 'destination-out';
+        }
+
+        // Processing algorithm to track surface scratch gesture path execution coordinates
+        function scratch(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches.clientX : e.clientX;
+            const clientY = e.touches ? e.touches.clientY : e.clientY;
+            
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            ctx.lineWidth = 40; // Broad erasure dimension size parameter values 
+            ctx.lineCap = 'round';
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // Desktop Pointer Device Connection Bindings
+        canvas.addEventListener('mousedown', (e) => { isDrawing = true; ctx.beginPath(); scratch(e); });
+        canvas.addEventListener('mousemove', scratch);
+        window.addEventListener('mouseup', () => { isDrawing = false; });
+
+        // Mobile Handset Screen Touch Response Interfaces
+        canvas.addEventListener('touchstart', (e) => { isDrawing = true; ctx.beginPath(); scratch(e); });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevents system page movement bounce anomalies while rubbing canvas layer
+            scratch(e);
+        });
+        window.addEventListener('touchend', () => { isDrawing = false; });
+
+        // Executes profile parameter setup tasks immediately upon compiling document context assets
+        window.onload = initScratchCard;
+    </script>
+</body>
+</html>
